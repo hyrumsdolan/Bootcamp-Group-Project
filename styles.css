@@ -1,0 +1,118 @@
+/* styles.css */
+
+body.dark-theme {
+    background-color: #121212;
+    color: #e0e0e0;
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    width: 100%;
+    max-width: 800px;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.header {
+    background-color: #333;
+    color: #FF9800;
+    text-align: center;
+    padding: 1rem 0;
+    border-radius: 8px 8px 0 0;
+}
+
+.main-content {
+    background-color: #1e1e1e;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+
+.text-input {
+    background-color: #262626;
+    color: #fff;
+    width: calc(100% - 24px); /* Adjust width taking padding into account */
+    margin: 10px auto; /* Centering the textarea */
+    padding: 12px;
+    font-size: 1rem;
+    border: 2px solid #333;
+    border-radius: 4px;
+    resize: vertical;
+    box-sizing: border-box;
+    transition: border-color 0.3s, transform 0.3s;
+}
+
+.text-input:focus {
+    border-color: #FF9800;
+    transform: scale(1.02); /* Slight zoom on focus */
+    outline: none;
+}
+
+.translate-btn {
+    display: block;
+    width: 200px;
+    margin: 20px auto; /* Centering the button */
+    background-color: #FF9800;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.translate-btn:hover {
+    background-color: #E65100;
+    transform: scale(1.05); /* Slight zoom on hover */
+}
+
+.footer {
+    background-color: #333;
+    color: #FF9800;
+    text-align: center;
+    padding: 20px 0;
+    border-radius: 0 0 8px 8px;
+    margin-top: 30px;
+    width: 100%;
+}
+
+.action-area, .output-area {
+    text-align: center;
+}
+
+.action-btn {
+    display: inline-block;
+    margin: 10px;
+    background-color: #FF9800;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.action-btn:hover {
+    background-color: #E65100;
+    transform: scale(1.05);
+}
+
+
+
+@media (max-width: 600px) {
+    .container {
+        margin: 10px;
+    }
+
+    .text-input, .translate-btn {
+        width: calc(100% - 40px); /* Adjust for smaller screens */
+    }
+}
