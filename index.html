@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Language Translator</title>
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-900 text-gray-300 font-sans flex justify-center items-center min-h-screen">
+    <div class="container mx-auto w-full max-w-xl p-0">
+        <header class="bg-gray-800 text-orange-500 text-center py-4 rounded-t-lg shadow-lg">
+            <h1 class="text-3xl font-bold">Language Translator</h1>
+        </header>
+        <main class="bg-gray-700 p-5 rounded-b-lg shadow-lg">
+            <div class="text-center my-4">
+                <button class="bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-600 transition duration-300 focus:outline-none focus:ring focus:ring-orange-300" id="voice2text">Click for Voice</button>
+            </div>
+            <div class="mb-4">
+                <textarea id="source-text" class="bg-gray-600 text-white w-full p-3 rounded border border-gray-800 focus:border-orange-500 focus:outline-none focus:ring focus:ring-orange-300 resize-none" placeholder="Enter text to translate..." rows="4"></textarea>
+            </div>
+            <div class="text-center my-4">
+                <button id="translate-btn" class="bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-600 transition duration-300 focus:outline-none focus:ring focus:ring-orange-300">Translate</button>
+            </div>
+            <div>
+                <textarea id="translated-text" class="bg-gray-600 text-white w-full p-3 rounded border border-gray-800 focus:border-orange-500 focus:outline-none focus:ring focus:ring-orange-300 resize-none" placeholder="Translation will appear here..." rows="4" readonly></textarea>
+            </div>
+            <div class="text-center my-4">
+                <button id="copy-button" class="bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-600 transition duration-300 focus:outline-none focus:ring focus:ring-orange-300">Copy to Clipboard</button>
+            </div>
+        </main>
+        
+    </div>
+    <script src="scripts.js"></script>
+</body>
+</html>
