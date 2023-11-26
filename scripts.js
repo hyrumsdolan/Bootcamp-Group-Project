@@ -1,6 +1,5 @@
 let textToBeTranslated = document.getElementById("source-text")
-
-let translatedText = document.getElementById("translated-text")
+let translatedTextBox = document.getElementById("translated-text")
 let voice2TextButton = document.getElementById("voice2text")
 let translateButton = document.getElementById("translate-btn")
 let CopyToClipBoardButton = document.getElementById("copy-button")
@@ -10,6 +9,12 @@ languageSelect.addEventListener('change', function() {
     var selectedOption = this.options[this.selectedIndex];
     selectedLanguage = selectedOption.value;
  });
+
+translateButton.addEventListener("click", function() {
+    let text = textToBeTranslated.value;
+    let translatedText = translate(selectedLanguage, text);
+    translatedTextBox.value = translatedText;
+});
 
 /**
  * Uses OpenAI's API to translate text from one language to another
@@ -64,28 +69,15 @@ function voice2Text() {
     console.log("voice2Text")
 }
 // TODO: Event Listener for voice2TextButton
-voice2TextButton.addEventListener("click", voice2Text){
-    console.log("voice2TextButton")
-}
+voice2TextButton.addEventListener("click", voice2Text);
 
-
-// TODO: Function that gives textToBeTranslated to the translate API and outputs text into the translatedText
-function translate() {
-    console.log("translate")
-}
-// TODO: Event Listener for translateButton
-translateButton.addEventListener("click", translate){
-    console.log("translateButton")
-}
 
 // TODO: Function that gives translatedText to the text2Speech API and streams audio
 function text2Speech() {
     console.log("text2Speech")
 }
 // TODO: Event Listener for translatedText, if has input run text2Speech
-translatedText.addEventListener("input", text2Speech){
-    console.log("translatedText")
-}
+translatedText.addEventListener("input", text2Speech);
 
 
 // TODO: Function that copies translatedText to clipboard
@@ -93,7 +85,5 @@ function copyToClipBoard() {
     console.log("copyToClipBoard")
 }
 // TODO: Event Listener for CopyToClipBoardButton
-CopyToClipBoardButton.addEventListener("click", copyToClipBoard){
-    console.log("CopyToClipBoardButton")
-}
+CopyToClipBoardButton.addEventListener("click", copyToClipBoard);
 
