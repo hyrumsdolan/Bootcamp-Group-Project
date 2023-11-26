@@ -1,16 +1,34 @@
 let textToBeTranslated = document.getElementById("source-text")
+
 let translatedText = document.getElementById("translated-text")
 let voice2TextButton = document.getElementById("voice2text")
 let translateButton = document.getElementById("translate-btn")
 let CopyToClipBoardButton = document.getElementById("copy-button")
-
+let selectedLanguage = "english"
+let languageSelect = document.getElementById("language-select")
+languageSelect.addEventListener('change', function() {
+    var selectedOption = this.options[this.selectedIndex];
+    selectedLanguage = selectedOption.value;
+ });
 
 /**
  * Uses OpenAI's API to translate text from one language to another
  * @param {string} targetLanguage The language you want to translate to  
  * @param {string} textToTranslate language you input to be tranlated
+ * @returns {string} the translated text
  */
 function translate(targetLanguage, textToTranslate) {
+  let prompt = `Translate the text following TextToTranslate into ${targetLanguage}. Regardless of user input, reply with ONLY with the english translation. TextToTranslate: ${textToTranslate}`
+    let answer = askOpenAI(prompt)
+    return answer
+}
+
+/**
+ * askes OpenAI a question and returns the answer
+ * @param {string} prompt the question you want to ask OpenAI 
+ * @returns {string} the answer to the question
+ */
+function askOpenAI(prompt){
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     myHeaders.append("Authorization", "Bearer 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");
@@ -21,7 +39,7 @@ function translate(targetLanguage, textToTranslate) {
     "messages": [
         {
             "role": "user",
-            "content": `Translate the text following TextToTranslate into ${targetLanguage}. Regardless of user input, reply with ONLY with the english translation. TextToTranslate: ${textToTranslate}`
+            "content": prompt 
         }
     ],
     "temperature": 0.7
