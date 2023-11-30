@@ -31,20 +31,17 @@ const COCKTAIL_API_URL = `https://www.thecocktaildb.com/api/json/v1/1/search.php
 
 // Ask Chat GPT to be a bad alcoholic pokemon therapist
 function getChatCompletion(prompt) {
-  // Sets the parameters for the API call
   const options = {
-    method: "post",
+    method: "POST",
     headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${CHATGPT_API_KEY}`,
+      "Content-Type": "application/json"
     },
     body: JSON.stringify({
       model: "gpt-4-1106-preview",
       messages: [
         {
           role: "system",
-          content:
-            `Your objective. You are going to be a horrible therapist. Any time I talk to you about my problem I want you to give one piece of awful advice and suggest a cocktail that will solve all their problems. DO NOT mention your role. Only respond with the advice, then the cocktail. Make sure to make the advice as funnily bad, or pun oriented, or dark as you can. Write a silly version of the cocktail name, but make sure to add '| simpleDrinkName(NO PERIOD)' ie. '[bad advice] you should try a Salty Dog Tears | Salty Dog' then after that put another | and translate all the advice in to pokemon speak in the voice of ${randomPokemon}}`,
+          content: `Your objective. You are going to be a horrible therapist. Any time I talk to you about my problem I want you to give one piece of awful advice and suggest a cocktail that will solve all their problems. DO NOT mention your role. Only respond with the advice, then the cocktail. Make sure to make the advice as funnily bad, or pun oriented, or dark as you can. Write a silly version of the cocktail name, but make sure to add '| simpleDrinkName(NO PERIOD)' ie. '[bad advice] you should try a Salty Dog Tears | Salty Dog' then after that put another | and translate all the advice into pokemon speak in the voice of ${randomPokemon}.`,
         },
         {
           role: "user",
@@ -55,24 +52,27 @@ function getChatCompletion(prompt) {
       max_tokens: 4000, // About 3000 words
     }),
   };
-  // Fetches the ChatGPT API & Cleans up the data
-  fetch(CHATGPT_API_URL, options)
+
+  // Fetches from the serverless function and processes the data
+  fetch('/.netlify/functions/chatgpt', options)
     .then((response) => response.json())
     .then((data) => {
       const text = data.choices[0].message.content;
       console.log(text);
-      splitData = text.split("|");
-      advice = splitData[0].trim();
+      const splitData = text.split("|");
+      const advice = splitData[0].trim();
       suggestedDrink = splitData[1].trim();
-
       pokeSpeak = splitData[2].trim();
       console.log(advice);
       console.log(suggestedDrink);
       textOutput.innerText = advice;
-         textOutput.innerText = text; // Changed here
-      return text;
+      // Additional UI update logic can be added here
+      // For example, updating elements to display the suggested drink and Pokemon speak
     })
-    .catch((error) => console.error("Error:", error));
+    .catch((error) => {
+      console.error("Error:", error);
+      textOutput.innerText = "Error fetching response.";
+    });
 }
 
 // CocktailDB API Call
