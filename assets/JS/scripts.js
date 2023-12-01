@@ -5,7 +5,7 @@ let submitButton = document.getElementById("submitButton");
 
 // Variables
 let isButtonPressed = false;
-let suggestedDrink = "";
+let suggestedDrink = "margarita";
 let randomPokemon = "charmander"
 let pokeSprite = ""
 let pokeSpeak = ""
@@ -87,6 +87,60 @@ function getChatCompletion(prompt) {
     for now just have it output to the output field - however we will need to make changes for this show correctly, but we can't do that until the PokeAPI is done and the UI is done.
      */
 
+    // Function to make CocktailDB API call
+async function getCocktailInfo(suggestedDrink) {
+  try {
+    var response = await fetch(`${COCKTAIL_API_URL}${suggestedDrink}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    var data = await response.json();
+
+    console.log(data);
+
+
+    return data;
+  } catch (error) {
+    throw new Error(`Error fetching cocktail information: ${error.message}`);
+    
+  }
+}
+
+// Function to display cocktail information in HTML
+function displayCocktailInfo(cocktail) {
+  
+  // Display the suggestion
+  var suggestionText = document.createElement('div');
+  suggestionText.innerHTML = `
+      <p class="text-xl font-bold mb-2">Suggested Cocktail: ${cocktail.strDrink}</p>
+      <p>Ingredients:</p>
+  `;
+
+  for (let i = 1; i <= 10; i++) {
+    var ingredient = cocktail[`strIngredient${i}`] || '';
+    var measure = cocktail[`strMeasure${i}`] || '';
+    if (ingredient && measure) {
+      var ingredientText = document.createElement('p');
+      ingredientText.textContent = ` - ${measure} ${ingredient}`;
+      suggestionText.appendChild(ingredientText);
+    }
+  }
+
+  var instructionsText = document.createElement('p');
+  instructionsText.textContent = `Instructions: ${cocktail.strInstructions}`;
+
+  textOutput.appendChild(suggestionText);
+  textOutput.appendChild(instructionsText);
+
+  // Display image 
+  var imageUrl = cocktail.strDrinkThumb;
+  if (imageUrl) {
+    var cocktailImage = document.createElement('img');
+    cocktailImage.src = imageUrl;
+    cocktailImage.alt = cocktail.strDrink;
+    textOutput.appendChild(cocktailImage);
+  }
+}
 
 
 
@@ -99,11 +153,13 @@ submitButton.addEventListener("click", async () => {
   setTimeout(() => (isButtonClicked = false), 1000);
   try {
     console.log("API CALL!");
-    const chatResponse = getChatCompletion(inputField.value);
-  } catch (error) {
-    console.error("Error:", error);
-    textOutput.innerText = "Error fetching response."; // Changed here as well
-  }
-});
-
-
+    const chatResponse = await getChatCompletion(inputField.value);
+    await getCocktailInfo(suggestedDrink)
+      .then((cocktailData) => {
+        displayCocktailInfo(cocktailData.drinks[0]);
+      })
+    } catch (error) {
+      console.error("Error:", error);
+      textOutput.innerText = "Error fetching response."; // Changed here as well
+    }
+  });
