@@ -10,10 +10,14 @@ let randomPokemon = "charmander"
 let pokeSprite = ""
 let pokeSpeak = ""
 
+const imageOutput = document.getElementById(`imageOutput`);
+const minNum = 0;
+const maxNum = 1017;
+const randomNumber = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
 
 // API Variables
 const CHATGPT_API_URL = "https://api.openai.com/v1/chat/completions"; // OpenAI's chat completion API endpoint
-const POKEMON_API_URL = `https://pokeapi.co/api/v2/pokemon/`; // Pokemon API endpoint
+const POKEMON_API_URL = `https://pokeapi.co/api/v2/pokemon/${randomNumber}`; // Pokemon API endpoint
 const COCKTAIL_API_URL = `https://www.thecocktaildb.com/api/json/v1/1/search.php?s=`; // Cocktail API
 
 //Get Random Pokemon
@@ -27,6 +31,22 @@ const COCKTAIL_API_URL = `https://www.thecocktaildb.com/api/json/v1/1/search.php
    We then need a funtion that will output the pokemonSprite to the HTML
    this function will be called in the event listener later
  */
+   document.getElementById(`submitButton`).addEventListener('click', function(){
+    fetch(POKEMON_API_URL)
+    .then(response => {
+      return response.json();
+    })
+    .then(data => {
+      let pokeSprite = data.sprites.front_default;
+      console.log(pokeSprite);
+      let img = document.createElement('img'); // Create a new img element
+      img.src = pokeSprite;                    // Set the src attribute to the sprite URL
+      console.log(img);
+      imageOutput.appendChild(img);            // Append the img element to the DOM
+    });
+});
+
+// console.log(randomNumber);
 
 
 // Ask Chat GPT to be a bad alcoholic pokemon therapist
@@ -54,26 +74,26 @@ function getChatCompletion(prompt) {
   };
 
   // Fetches from the serverless function and processes the data
-  fetch('/.netlify/functions/chatgpt', options)
-    .then((response) => response.json())
-    .then((data) => {
-      const text = data.choices[0].message.content;
-      console.log(text);
-      const splitData = text.split("|");
-      const advice = splitData[0].trim();
-      suggestedDrink = splitData[1].trim();
-      pokeSpeak = splitData[2].trim();
-      console.log(advice);
-      console.log(suggestedDrink);
-      textOutput.innerText = advice;
-      // Additional UI update logic can be added here
-      // For example, updating elements to display the suggested drink and Pokemon speak
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-      textOutput.innerText = "Error fetching response.";
-    });
-}
+//   fetch('/.netlify/functions/chatgpt', options)
+//     .then((response) => response.json())
+//     .then((data) => {
+//       const text = data.choices[0].message.content;
+//       console.log(text);
+//       const splitData = text.split("|");
+//       const advice = splitData[0].trim();
+//       suggestedDrink = splitData[1].trim();
+//       pokeSpeak = splitData[2].trim();
+//       console.log(advice);
+//       console.log(suggestedDrink);
+//       textOutput.innerText = advice;
+//       // Additional UI update logic can be added here
+//       // For example, updating elements to display the suggested drink and Pokemon speak
+//     })
+//     .catch((error) => {
+//       console.error("Error:", error);
+//       textOutput.innerText = "Error fetching response.";
+//     });
+// }
 
 // CocktailDB API Call
 /**
@@ -106,4 +126,4 @@ submitButton.addEventListener("click", async () => {
   }
 });
 
-
+}
