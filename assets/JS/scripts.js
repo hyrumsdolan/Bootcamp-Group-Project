@@ -1,52 +1,56 @@
 // HTML FIELDS
-let inputField = document.getElementById("inputField");
-let textOutput = document.getElementById("textOutput");
+let oakSpeak = document.getElementById("oak-speak");
+let inputField = document.getElementById("input-field");
+let pokeSpeakOutput = document.getElementById("pokespeak-output");
+let adviceOutput = document.getElementById("advice-output");
 let submitButton = document.getElementById("submitButton");
+let drinkOutput = document.getElementById("drink-output");
+const imageOutput = document.getElementById(`pokemon-img`);
+
+let slideOakSpeak = document.getElementById("slide-oak-speak");
+let slideInput = document.getElementById("slide-input");
+let slideBuffer = document.getElementById("slide-buffer");
+let slideOutput = document.getElementById("slide-output");
 
 // Variables
 let isButtonPressed = false;
 let suggestedDrink = "margarita";
-let randomPokemon = "charmander"
-let pokeSprite = ""
-let pokeSpeak = ""
+let randomPokemon = "charmander";
+let pokeSprite = "";
+let pokeSpeak = "";
 
-const imageOutput = document.getElementById(`imageOutput`);
-const minNum = 0;
-const maxNum = 1017;
-const randomNumber = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
+
+
 
 // API Variables
 const CHATGPT_API_URL = "https://api.openai.com/v1/chat/completions"; // OpenAI's chat completion API endpoint
-const POKEMON_API_URL = `https://pokeapi.co/api/v2/pokemon/${randomNumber}`; // Pokemon API endpoint
+const POKEMON_API_URL = `https://pokeapi.co/api/v2/pokemon/`; // Pokemon API endpoint
 const COCKTAIL_API_URL = `https://www.thecocktaildb.com/api/json/v1/1/search.php?s=`; // Cocktail API
 
 //Get Random Pokemon
-/**
-   When you call your API_URL you will need to add the randomNumber to the end of the URL
-   ie. POKEMON_API_URL + randomNumber
-   Do it down here instead of in the API variables for organization
-   This needs to return a randomPokemon name to randomPokemon
-   then you will also want to return the pokemonSprite
+const minNum = 0;
+const maxNum = 386;
+const randomNumber = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
 
-   We then need a funtion that will output the pokemonSprite to the HTML
-   this function will be called in the event listener later
- */
-   document.getElementById(`submitButton`).addEventListener('click', function(){
-    fetch(POKEMON_API_URL)
-    .then(response => {
+getRandomPokemon();
+
+function getRandomPokemon() {
+  fetch(POKEMON_API_URL+randomNumber)
+    .then((response) => {
       return response.json();
     })
-    .then(data => {
+    .then((data) => {
+      randomPokemon = data.species.name;
+      console.log(randomPokemon);
       let pokeSprite = data.sprites.front_default;
       console.log(pokeSprite);
-      let img = document.createElement('img'); // Create a new img element
-      img.src = pokeSprite;                    // Set the src attribute to the sprite URL
+      let img = document.createElement("img"); 
+      img.src = pokeSprite; 
       console.log(img);
-      imageOutput.appendChild(img);            // Append the img element to the DOM
+      imageOutput.src = pokeSprite; 
     });
-});
+}
 
-// console.log(randomNumber);
 
 
 // Ask Chat GPT to be a bad alcoholic pokemon therapist
@@ -54,7 +58,8 @@ function getChatCompletion(prompt) {
   const options = {
     method: "POST",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
+      Authorization: `Bearer {NEED TO ADD API KEY HERE}`,
     },
     body: JSON.stringify({
       model: "gpt-4-1106-preview",
@@ -68,46 +73,38 @@ function getChatCompletion(prompt) {
           content: prompt,
         },
       ],
-      temperature: 1, // 0.7 is the default, 0 is less creative, 1 is more creative
+      temperature: 0.7, // 0.7 is the default, 0 is less creative, 1 is more creative
       max_tokens: 4000, // About 3000 words
     }),
   };
 
-  // Fetches from the serverless function and processes the data
-//   fetch('/.netlify/functions/chatgpt', options)
-//     .then((response) => response.json())
-//     .then((data) => {
-//       const text = data.choices[0].message.content;
-//       console.log(text);
-//       const splitData = text.split("|");
-//       const advice = splitData[0].trim();
-//       suggestedDrink = splitData[1].trim();
-//       pokeSpeak = splitData[2].trim();
-//       console.log(advice);
-//       console.log(suggestedDrink);
-//       textOutput.innerText = advice;
-//       // Additional UI update logic can be added here
-//       // For example, updating elements to display the suggested drink and Pokemon speak
-//     })
-//     .catch((error) => {
-//       console.error("Error:", error);
-//       textOutput.innerText = "Error fetching response.";
-//     });
-// }
+
+// Fetches from the serverless function and processes the data
+  // Fetches the ChatGPT API & Cleans up the data
+  fetch(CHATGPT_API_URL, options)
+    .then((response) => response.json())
+    .then((data) => {
+      const text = data.choices[0].message.content;
+      console.log(text);
+      splitData = text.split("|");
+      advice = splitData[0].trim();
+      suggestedDrink = splitData[1].trim();
+      getCocktailInfo(suggestedDrink).then((cocktailData) => {
+        displayCocktailInfo(cocktailData.drinks[0]);
+      });
+      pokeSpeak = splitData[2].trim();
+      console.log(advice);
+      console.log(suggestedDrink);
+      pokeSpeakOutput.innerHTML = pokeSpeak
+      adviceOutput.innerText = advice;
+
+      
+      return text;
+    })
+    .catch((error) => console.error("Error:", error));
+  }
 
 // CocktailDB API Call
-/**
-    This needs to be written within a function that can be called after the ChatGPT call. When you call your API_URL you will need to add the suggestedDrink to the end of the URL
-    ie. COCKTAIL_API_URL + suggestedDrink
-
-    The API call will need to return all the needed information into variables
-
-    Then create a separate function that will output the information into the HTML
-    This function will be called in the event listener
-    for now just have it output to the output field - however we will need to make changes for this show correctly, but we can't do that until the PokeAPI is done and the UI is done.
-     */
-
-    // Function to make CocktailDB API call
 async function getCocktailInfo(suggestedDrink) {
   try {
     var response = await fetch(`${COCKTAIL_API_URL}${suggestedDrink}`);
@@ -118,69 +115,106 @@ async function getCocktailInfo(suggestedDrink) {
 
     console.log(data);
 
-
     return data;
   } catch (error) {
     throw new Error(`Error fetching cocktail information: ${error.message}`);
-    
   }
 }
 
 // Function to display cocktail information in HTML
 function displayCocktailInfo(cocktail) {
-  
   // Display the suggestion
-  var suggestionText = document.createElement('div');
-  suggestionText.innerHTML = `
+  var suggestionText = document.createElement("div");
+  drinkOutput.innerHTML = `
       <p class="text-xl font-bold mb-2">Suggested Cocktail: ${cocktail.strDrink}</p>
       <p>Ingredients:</p>
   `;
 
   for (let i = 1; i <= 10; i++) {
-    var ingredient = cocktail[`strIngredient${i}`] || '';
-    var measure = cocktail[`strMeasure${i}`] || '';
+    var ingredient = cocktail[`strIngredient${i}`] || "";
+    var measure = cocktail[`strMeasure${i}`] || "";
     if (ingredient && measure) {
-      var ingredientText = document.createElement('p');
+      var ingredientText = document.createElement("p");
       ingredientText.textContent = ` - ${measure} ${ingredient}`;
       suggestionText.appendChild(ingredientText);
     }
   }
 
-  var instructionsText = document.createElement('p');
+  var instructionsText = document.createElement("p");
   instructionsText.textContent = `Instructions: ${cocktail.strInstructions}`;
 
-  textOutput.appendChild(suggestionText);
-  textOutput.appendChild(instructionsText);
+  drinkOutput.appendChild(suggestionText);
+  drinkOutput.appendChild(instructionsText);
 
-  // Display image 
+  // Display image
   var imageUrl = cocktail.strDrinkThumb;
   if (imageUrl) {
-    var cocktailImage = document.createElement('img');
+    var cocktailImage = document.createElement("img");
     cocktailImage.src = imageUrl;
     cocktailImage.alt = cocktail.strDrink;
-    textOutput.appendChild(cocktailImage);
+    drinkOutput.appendChild(cocktailImage);
   }
 }
 
 
 
+document.addEventListener("click", async () => {
+  console.log("click");
+  slideOakSpeak.classList.add("hidden");
+  slideInput.classList.remove("hidden");
+}, { once: true });
 
-// Submit Button Event Listener
 submitButton.addEventListener("click", async () => {
   if (isButtonPressed) return;
 
   isButtonPressed = true;
+  slideInput.classList.add("hidden");
+  slideBuffer.classList.remove("hidden");
   setTimeout(() => (isButtonClicked = false), 1000);
   try {
     console.log("API CALL!");
-    const chatResponse = await getChatCompletion(inputField.value);
-    await getCocktailInfo(suggestedDrink)
-      .then((cocktailData) => {
-        displayCocktailInfo(cocktailData.drinks[0]);
-      })
-    } catch (error) {
-      console.error("Error:", error);
-      textOutput.innerText = "Error fetching response."; // Changed here as well
-    }
-  });
+    await getChatCompletion(inputField.value);
+    
+  } catch (error) {
+    console.error("Error:", error);
+    adviceOutput.innerText = "Error fetching response."; // Changed here as well
+  }
+  document.addEventListener("click", async () => {
+    console.log("I'm working!")
+    slideBuffer.classList.add("hidden");
+    slideOutput.classList.remove("hidden");
 
+    document.addEventListener("click", async () => {
+      console.log("I'm working!")
+      pokeSpeakOutput.classList.add("hidden");
+      adviceOutput.classList.remove("hidden");
+
+      document.addEventListener("click", async () => {
+        console.log("I'm working!")
+        adviceOutput.classList.add("hidden");
+        imageOutput.classList.add("hidden");
+        drinkOutput.classList.remove("hidden");
+      }, { once: true });
+
+    }, { once: true });
+
+  }, { once: true });
+});
+
+
+
+// Submit Button Event Listener
+// submitButton.addEventListener("click", async () => {
+//   if (isButtonPressed) return;
+
+//   isButtonPressed = true;
+//   setTimeout(() => (isButtonClicked = false), 1000);
+//   try {
+//     console.log("API CALL!");
+//     await getChatCompletion(inputField.value);
+    
+//   } catch (error) {
+//     console.error("Error:", error);
+//     adviceOutput.innerText = "Error fetching response."; // Changed here as well
+//   }
+// });

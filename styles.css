@@ -1,0 +1,11 @@
+* {
+    font-family: "Press Start 2P";
+}
+
+.width-80 {
+    width: 80vw; /* vw unit represents a percentage of the viewport width */
+}
+
+.width-30 {
+    width: 30vw;
+}
