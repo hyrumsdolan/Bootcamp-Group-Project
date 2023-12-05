@@ -5,6 +5,10 @@ let pokeSpeakOutput = document.getElementById("pokespeak-output");
 let adviceOutput = document.getElementById("advice-output");
 let submitButton = document.getElementById("submitButton");
 let drinkOutput = document.getElementById("drink-output");
+let drinkName = document.getElementById("drink-name");
+let drinkIngredients = document.getElementById("drink-ingredients");
+let drinkInstructions = document.getElementById("drink-instructions"); 
+let drinkImage = document.getElementById("drink-img");
 const imageOutput = document.getElementById(`pokemon-img`);
 
 let slideOakSpeak = document.getElementById("slide-oak-speak");
@@ -59,21 +63,22 @@ function getChatCompletion(prompt) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer {NEED TO ADD API KEY HERE}`,
+      Authorization: `Bearer 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`,
     },
     body: JSON.stringify({
       model: "gpt-4-1106-preview",
       messages: [
         {
           role: "system",
-          content: `Your objective. You are going to be a horrible therapist. Any time I talk to you about my problem I want you to give one piece of awful advice and suggest a cocktail that will solve all their problems. DO NOT mention your role. Only respond with the advice, then the cocktail. Make sure to make the advice as funnily bad, or pun oriented, or dark as you can. Write a silly version of the cocktail name, but make sure to add '| simpleDrinkName(NO PERIOD)' ie. '[bad advice] you should try a Salty Dog Tears | Salty Dog' then after that put another | and translate all the advice into pokemon speak in the voice of ${randomPokemon}.`,
+          content: `Objective: Act as a humorously ineffective therapist. 1. Response to Problems: Provide humorously terrible advice, pun-laden and darkly humorous. 2. Cocktail Suggestion: Follow advice with a whimsically named cocktail, formatted as "advice I suggest you try a [modified cocktail name] | original cocktail name" 3. Pokemon Speak: Conclude with a Pokemon phrase in the style of a ${randomPokemon}, similar in length to the advice. Only include Pokemon-like sounds. minimum of 10 pokesounds 4. Formatting: Make sure there are only two | symbols. The first section MUST be the advice, the second section MUST be the original cocktail name with no punctuation, and the third MUST be the pokeSpeak. Avoid punctuation in the cocktail name. Note: Do not mention your therapist role.
+          Ex. If the input was "My dad died in 9/11" you would respond "Wow, that sounds like a major bummer. Well, to lift your spirits why not aim high and just hijack every moment you can for happiness? You should try a Towering Inferno | Long Island Ice Tea | [${randomPokemon} Speak]"`,
         },
         {
           role: "user",
           content: prompt,
         },
       ],
-      temperature: 0.7, // 0.7 is the default, 0 is less creative, 1 is more creative
+      temperature: 1, // 0.7 is the default, 0 is less creative, 1 is more creative
       max_tokens: 4000, // About 3000 words
     }),
   };
@@ -104,6 +109,10 @@ function getChatCompletion(prompt) {
     .catch((error) => console.error("Error:", error));
   }
 
+  getCocktailInfo(suggestedDrink).then((cocktailData) => {
+    displayCocktailInfo(cocktailData.drinks[0]);
+  });
+
 // CocktailDB API Call
 async function getCocktailInfo(suggestedDrink) {
   try {
@@ -123,37 +132,54 @@ async function getCocktailInfo(suggestedDrink) {
 
 // Function to display cocktail information in HTML
 function displayCocktailInfo(cocktail) {
-  // Display the suggestion
-  var suggestionText = document.createElement("div");
-  drinkOutput.innerHTML = `
-      <p class="text-xl font-bold mb-2">Suggested Cocktail: ${cocktail.strDrink}</p>
-      <p>Ingredients:</p>
-  `;
-
+  drinkName.innerHTML = cocktail.strDrink;
+  
   for (let i = 1; i <= 10; i++) {
-    var ingredient = cocktail[`strIngredient${i}`] || "";
-    var measure = cocktail[`strMeasure${i}`] || "";
-    if (ingredient && measure) {
-      var ingredientText = document.createElement("p");
-      ingredientText.textContent = ` - ${measure} ${ingredient}`;
-      suggestionText.appendChild(ingredientText);
+      var ingredient = cocktail[`strIngredient${i}`] || "";
+      var measure = cocktail[`strMeasure${i}`] || "";
+      if (ingredient && measure) {
+        var ingredientText = document.createElement("p");
+        ingredientText.textContent = ` - ${measure} ${ingredient}`;
+        drinkIngredients.appendChild(ingredientText);
+      }
     }
-  }
 
-  var instructionsText = document.createElement("p");
-  instructionsText.textContent = `Instructions: ${cocktail.strInstructions}`;
+  drinkInstructions.innerHTML = cocktail.strInstructions;
 
-  drinkOutput.appendChild(suggestionText);
-  drinkOutput.appendChild(instructionsText);
+  drinkImage.src = cocktail.strDrinkThumb;
 
-  // Display image
-  var imageUrl = cocktail.strDrinkThumb;
-  if (imageUrl) {
-    var cocktailImage = document.createElement("img");
-    cocktailImage.src = imageUrl;
-    cocktailImage.alt = cocktail.strDrink;
-    drinkOutput.appendChild(cocktailImage);
-  }
+  // Display the suggestion
+  // var suggestionText = document.createElement("div");
+  // drinkOutput.innerHTML = `
+  //     <p class="text-xl font-bold mb-2">Suggested Cocktail: ${cocktail.strDrink}</p>
+  //     <p>Ingredients:</p>
+  // `;
+
+  // for (let i = 1; i <= 10; i++) {
+  //   var ingredient = cocktail[`strIngredient${i}`] || "";
+  //   var measure = cocktail[`strMeasure${i}`] || "";
+  //   if (ingredient && measure) {
+  //     var ingredientText = document.createElement("p");
+  //     ingredientText.textContent = ` - ${measure} ${ingredient}`;
+  //     suggestionText.appendChild(ingredientText);
+  //   }
+  // }
+
+  // var instructionsText = document.createElement("p");
+  // instructionsText.textContent = `Instructions: ${cocktail.strInstructions}`;
+
+  // drinkOutput.appendChild(suggestionText);
+  // drinkOutput.appendChild(instructionsText);
+
+  // // Display image
+  // var imageUrl = cocktail.strDrinkThumb;
+  // if (imageUrl) {
+  //   var cocktailImage = document.createElement("img");
+  //   cocktailImage.src = imageUrl;
+  //   cocktailImage.style.width = "50%";
+  //   cocktailImage.alt = cocktail.strDrink;
+  //   drinkOutput.appendChild(cocktailImage);
+  // }
 }
 
 
@@ -165,6 +191,7 @@ document.addEventListener("click", async () => {
 }, { once: true });
 
 submitButton.addEventListener("click", async () => {
+  
   if (isButtonPressed) return;
 
   isButtonPressed = true;
@@ -179,18 +206,21 @@ submitButton.addEventListener("click", async () => {
     console.error("Error:", error);
     adviceOutput.innerText = "Error fetching response."; // Changed here as well
   }
+  
+await delay(1000);
+
   document.addEventListener("click", async () => {
-    console.log("I'm working!")
+    console.log("Buffer Hidden")
     slideBuffer.classList.add("hidden");
     slideOutput.classList.remove("hidden");
 
     document.addEventListener("click", async () => {
-      console.log("I'm working!")
+      console.log("Show Advice")
       pokeSpeakOutput.classList.add("hidden");
       adviceOutput.classList.remove("hidden");
 
       document.addEventListener("click", async () => {
-        console.log("I'm working!")
+        console.log("Show Drink")
         adviceOutput.classList.add("hidden");
         imageOutput.classList.add("hidden");
         drinkOutput.classList.remove("hidden");
@@ -201,7 +231,9 @@ submitButton.addEventListener("click", async () => {
   }, { once: true });
 });
 
-
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 // Submit Button Event Listener
 // submitButton.addEventListener("click", async () => {

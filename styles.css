@@ -3,9 +3,23 @@
 }
 
 .width-80 {
-    width: 80vw; /* vw unit represents a percentage of the viewport width */
+    width: 80vw;
 }
 
 .width-30 {
     width: 30vw;
 }
+
+.height-80 {
+    height: 80vh;
+}
+
+.height-20 {
+    height: 20%;
+}
+
+#drink-img {
+    max-height: 300px;
+    object-fit: contain;
+  }
+  
