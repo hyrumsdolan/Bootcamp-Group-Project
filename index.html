@@ -11,12 +11,9 @@
     
 </head>
 <body class="flex flex-col justify-center items-center w-full h-screen bg-gradient-to-b from-white to-blue-400 font-start2p">  
-    <!-- max-w-xl w-100vw h-full flex flex-col bg-gradient-to-b from-white to-blue-400 justify-center items-center -->
-    <!-- TODO: link google font -->
 
 <!-- Welcome Screen -->
 
-<!-- TODO: find pokemon logo font and apply (yellow with red outlined letters) -->
 <main id="content-center" class="max-w-8xl justify-center items-center h-screen flex flex-col width-80">
     <section id="slide-oak-speak" class="">
         <div class="container mx-auto p-4">
@@ -78,20 +75,18 @@
         <!-- Text box with oak reply -->
         <div class="bg-white rounded-lg p-4 border-4 border-blue-400">
             <p class="text-center text-xl font-bold">Hrm... well, I'm not a Professor of Psychology, so I would go to jail if I pretended to be your therapist. Luckily though, Pok&eacute;mon can't go to jail.<img id="text-arrow-red" src="./images/text_end_arrow__red_.png" class="inline-text-img"></p>
-                <!-- TODO: position arrow directly after text and make "flashing" effect --></p>
         </div>
             
             
     </section>
 
-<!-- Screen 4 with text output and pokemon sprite -->
+
 
     <section id="slide-output" class="min-w-80 m-5 hidden">
         <div class="container mx-auto p-4">
         <h1 class="text-yellow-300 p-2 text-3xl md:text-4xl font-bold mb-6 text-center">Pok&eacute;Therapy</h1>
         </div>
 
-    <!-- TODO: Pokemon sprite -->
         <div  class="flex justify-center m-5 ">
             <img id="pokemon-img" src="https://via.placeholder.com/150" alt="Pokemon Sprite" class="w-1/2 md:w-1/3">
         </div>
@@ -116,17 +111,6 @@
             <p id="drink-instructions" class="text-center mt-4">Instructions</p>
         </div>
     </section>
-
-
-<!-- api output -->
-    <section class="hidden">
-        <div id="textOutput" class="mt-6 p-4 border border-gray-400 rounded shadow-lg">
-            <!-- Text output will be displayed here -->
-        </div>
-
-        <div id="imageOutput" class="mt-6"></div>
-    </div>
-</section>
 </main>
 
     <script src="./assets/JS/scripts.js"></script>

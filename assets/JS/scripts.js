@@ -65,7 +65,7 @@ function getChatCompletion(prompt) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer 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`,
+      Authorization: `Bearer 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`,
     },
     body: JSON.stringify({
       model: "gpt-4-1106-preview",
@@ -86,55 +86,30 @@ function getChatCompletion(prompt) {
   };
 
 
-
-
-  etch('/.netlify/functions/chatgpt', options)
+// Fetches from the serverless function and processes the data
+  // Fetches the ChatGPT API & Cleans up the data
+  fetch(CHATGPT_API_URL, options)
     .then((response) => response.json())
     .then((data) => {
       const text = data.choices[0].message.content;
       console.log(text);
-      const splitData = text.split("|");
-      const advice = splitData[0].trim();
+      splitData = text.split("|");
+      advice = splitData[0].trim();
       suggestedDrink = splitData[1].trim();
       getCocktailInfo(suggestedDrink).then((cocktailData) => {
         displayCocktailInfo(cocktailData.drinks[0]);
+      });
       pokeSpeak = splitData[2].trim();
       console.log(advice);
       console.log(suggestedDrink);
-      textOutput.innerText = advice;
-      return text;
-      
-    })
-    .catch((error) => {
-      console.error("Error:", error);
+      pokeSpeakOutput.innerHTML = pokeSpeak
       adviceOutput.innerText = `They said "${advice}"`;
-    });
-}
-
-// Fetches from the serverless function and processes the data
-  // Fetches the ChatGPT API & Cleans up the data
-  // fetch(CHATGPT_API_URL, options)
-  //   .then((response) => response.json())
-  //   .then((data) => {
-  //     const text = data.choices[0].message.content;
-  //     console.log(text);
-  //     splitData = text.split("|");
-  //     advice = splitData[0].trim();
-  //     suggestedDrink = splitData[1].trim();
-  //     getCocktailInfo(suggestedDrink).then((cocktailData) => {
-  //       displayCocktailInfo(cocktailData.drinks[0]);
-  //     });
-  //     pokeSpeak = splitData[2].trim();
-  //     console.log(advice);
-  //     console.log(suggestedDrink);
-  //     pokeSpeakOutput.innerHTML = pokeSpeak
-  //     adviceOutput.innerText = `They said "${advice}"`;
 
       
-  //     return text;
-  //   })
-  //   .catch((error) => console.error("Error:", error));
-  // }
+      return text;
+    })
+    .catch((error) => console.error("Error:", error));
+  }
 
   getCocktailInfo(suggestedDrink).then((cocktailData) => {
     displayCocktailInfo(cocktailData.drinks[0]);
@@ -175,38 +150,6 @@ function displayCocktailInfo(cocktail) {
 
   drinkImage.src = cocktail.strDrinkThumb;
 
-  // Display the suggestion
-  // var suggestionText = document.createElement("div");
-  // drinkOutput.innerHTML = `
-  //     <p class="text-xl font-bold mb-2">Suggested Cocktail: ${cocktail.strDrink}</p>
-  //     <p>Ingredients:</p>
-  // `;
-
-  // for (let i = 1; i <= 10; i++) {
-  //   var ingredient = cocktail[`strIngredient${i}`] || "";
-  //   var measure = cocktail[`strMeasure${i}`] || "";
-  //   if (ingredient && measure) {
-  //     var ingredientText = document.createElement("p");
-  //     ingredientText.textContent = ` - ${measure} ${ingredient}`;
-  //     suggestionText.appendChild(ingredientText);
-  //   }
-  // }
-
-  // var instructionsText = document.createElement("p");
-  // instructionsText.textContent = `Instructions: ${cocktail.strInstructions}`;
-
-  // drinkOutput.appendChild(suggestionText);
-  // drinkOutput.appendChild(instructionsText);
-
-  // // Display image
-  // var imageUrl = cocktail.strDrinkThumb;
-  // if (imageUrl) {
-  //   var cocktailImage = document.createElement("img");
-  //   cocktailImage.src = imageUrl;
-  //   cocktailImage.style.width = "50%";
-  //   cocktailImage.alt = cocktail.strDrink;
-  //   drinkOutput.appendChild(cocktailImage);
-  // }
 }
 
 
@@ -231,7 +174,7 @@ submitButton.addEventListener("click", async () => {
     
   } catch (error) {
     console.error("Error:", error);
-    adviceOutput.innerText = "Error fetching response."; // Changed here as well
+    adviceOutput.innerText = "Error fetching response."; 
   }
   
 await delay(1000);
@@ -265,18 +208,3 @@ function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// Submit Button Event Listener
-// submitButton.addEventListener("click", async () => {
-//   if (isButtonPressed) return;
-
-//   isButtonPressed = true;
-//   setTimeout(() => (isButtonClicked = false), 1000);
-//   try {
-//     console.log("API CALL!");
-//     await getChatCompletion(inputField.value);
-    
-//   } catch (error) {
-//     console.error("Error:", error);
-//     adviceOutput.innerText = "Error fetching response."; // Changed here as well
-//   }
-// });
