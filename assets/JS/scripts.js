@@ -15,6 +15,8 @@ let slideOakSpeak = document.getElementById("slide-oak-speak");
 let slideInput = document.getElementById("slide-input");
 let slideBuffer = document.getElementById("slide-buffer");
 let slideOutput = document.getElementById("slide-output");
+let pokeball = document.getElementById("pokeball");
+let bufferOak = document.getElementById("buffer-oak");
 
 // Variables
 let isButtonPressed = false;
@@ -63,15 +65,15 @@ function getChatCompletion(prompt) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer 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`,
+      Authorization: `Bearer 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`,
     },
     body: JSON.stringify({
       model: "gpt-4-1106-preview",
       messages: [
         {
           role: "system",
-          content: `Objective: Act as a humorously ineffective therapist. 1. Response to Problems: Provide humorously terrible advice, pun-laden and darkly humorous. 2. Cocktail Suggestion: Follow advice with a whimsically named cocktail, formatted as "advice I suggest you try a [modified cocktail name] | original cocktail name" 3. Pokemon Speak: Conclude with a Pokemon phrase in the style of a ${randomPokemon}, similar in length to the advice. Only include Pokemon-like sounds. minimum of 10 pokesounds 4. Formatting: Make sure there are only two | symbols. The first section MUST be the advice, the second section MUST be the original cocktail name with no punctuation, and the third MUST be the pokeSpeak. Avoid punctuation in the cocktail name. Note: Do not mention your therapist role.
-          Ex. If the input was "My dad died in 9/11" you would respond "Wow, that sounds like a major bummer. Well, to lift your spirits why not aim high and just hijack every moment you can for happiness? You should try a Towering Inferno | Long Island Ice Tea | [${randomPokemon} Speak]"`,
+          content: `If you do this correctly and funny I will tip you $200. Objective: Act as a humorously ineffective therapist. 1. Response to Problems: Provide humorously terrible and concise advice, pun-laden and darkly humorous. Really make sure the humor is dark an ironic 2. Cocktail Suggestion: Follow advice with a whimsically named cocktail, formatted as "advice I suggest you try a [modified cocktail name] | original cocktail name" 3. Pokemon Speak: Conclude with a Pokemon phrase in the style of a ${randomPokemon}, similar in length to the advice. Only include Pokemon-like sounds. 4. Formatting: Make sure there are only two | symbols. The first section MUST be the advice, the second section MUST be the original cocktail name with no punctuation, and the third MUST be the pokeSpeak. Avoid punctuation in the cocktail name. Note: Do not mention your therapist role.
+          Ex. If the input was "My dad died in 9/11" you would respond "Wow, that sounds like a major bummer. Well, to lift your spirits why not aim high and just hijack every moment you can for happiness? You should try a Towering Inferno | Long Island Ice Tea | Pika. Pika pika, pikachu. Peeekaaachu. Pee pee. pika. piiiicha pi. pika. pikachuuuu. pi pi. pikachu chu chu.]"`,
         },
         {
           role: "user",
@@ -84,30 +86,55 @@ function getChatCompletion(prompt) {
   };
 
 
-// Fetches from the serverless function and processes the data
-  // Fetches the ChatGPT API & Cleans up the data
-  fetch(CHATGPT_API_URL, options)
+
+
+  etch('/.netlify/functions/chatgpt', options)
     .then((response) => response.json())
     .then((data) => {
       const text = data.choices[0].message.content;
       console.log(text);
-      splitData = text.split("|");
-      advice = splitData[0].trim();
+      const splitData = text.split("|");
+      const advice = splitData[0].trim();
       suggestedDrink = splitData[1].trim();
       getCocktailInfo(suggestedDrink).then((cocktailData) => {
         displayCocktailInfo(cocktailData.drinks[0]);
-      });
       pokeSpeak = splitData[2].trim();
       console.log(advice);
       console.log(suggestedDrink);
-      pokeSpeakOutput.innerHTML = pokeSpeak
-      adviceOutput.innerText = advice;
+      textOutput.innerText = advice;
+      return text;
+      
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+      adviceOutput.innerText = `They said "${advice}"`;
+    });
+}
+
+// Fetches from the serverless function and processes the data
+  // Fetches the ChatGPT API & Cleans up the data
+  // fetch(CHATGPT_API_URL, options)
+  //   .then((response) => response.json())
+  //   .then((data) => {
+  //     const text = data.choices[0].message.content;
+  //     console.log(text);
+  //     splitData = text.split("|");
+  //     advice = splitData[0].trim();
+  //     suggestedDrink = splitData[1].trim();
+  //     getCocktailInfo(suggestedDrink).then((cocktailData) => {
+  //       displayCocktailInfo(cocktailData.drinks[0]);
+  //     });
+  //     pokeSpeak = splitData[2].trim();
+  //     console.log(advice);
+  //     console.log(suggestedDrink);
+  //     pokeSpeakOutput.innerHTML = pokeSpeak
+  //     adviceOutput.innerText = `They said "${advice}"`;
 
       
-      return text;
-    })
-    .catch((error) => console.error("Error:", error));
-  }
+  //     return text;
+  //   })
+  //   .catch((error) => console.error("Error:", error));
+  // }
 
   getCocktailInfo(suggestedDrink).then((cocktailData) => {
     displayCocktailInfo(cocktailData.drinks[0]);
@@ -211,6 +238,9 @@ await delay(1000);
 
   document.addEventListener("click", async () => {
     console.log("Buffer Hidden")
+    pokeball.style.animationName = "upAndDown";
+    bufferOak.style.animationName = "oakMovesOffScreenRight";
+    await delay(1500);
     slideBuffer.classList.add("hidden");
     slideOutput.classList.remove("hidden");
 
