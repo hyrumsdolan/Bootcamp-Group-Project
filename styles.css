@@ -14,6 +14,10 @@
     height: 80vh;
 }
 
+.min-w-80 {
+    min-width: 80vw;
+}
+
 .height-20 {
     height: 20%;
 }
@@ -23,3 +27,62 @@
     object-fit: contain;
   }
   
+  #text-arrow-red {
+    animation-name: redBlink;
+    animation-iteration-count: infinite;
+    animation-duration: 1s;
+    animation-timing-function: steps(1, end);
+}
+
+  @keyframes upAndDown {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-100px); /* Adjust the value as needed */
+    }
+    100% {
+        transform: translateY(150px);
+    }
+}
+
+@keyframes redBlink{
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+   
+}
+
+@keyframes oakMovesOffScreenRight {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(100vw);
+    }
+}
+
+#pokeball {
+    width: 4%;
+    position: absolute; /* Adjust positioning as needed */
+    /* animation-name: upAndDown; */
+    animation-duration: 2s; /* Adjust timing as needed */
+    /* animation-fill-mode: forwards; */
+    right: 54%;
+    top: 44%;
+}
+
+#buffer-oak{
+   
+    /* animation-name: upAndDown; */
+    animation-duration: 2s; /* Adjust timing as needed */
+}
+
+.inline-text-img {
+    height: .9em; /* Sets the height of the image to match the font size of the surrounding text */
+    vertical-align: middle; /* Aligns the image vertically with the middle of the text */
+    display: inline-block;
+}
